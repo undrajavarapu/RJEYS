@@ -15,13 +15,13 @@ export default class Counter extends Component {
     
     return (
       
-      <>
+      <center>
         <h1>Hello World</h1>
         <label>{this.state.count}</label>
         <button onClick={()=>this.handleCLick()}>Increment</button>
         <button onClick={()=>{this.handleReset()}}>Reset</button>
         <button onClick={()=>{this.handleDec()}}>Decrement</button>
-      </>
+      </center>
     )
   }
 }

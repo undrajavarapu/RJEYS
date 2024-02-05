@@ -3,14 +3,18 @@ import React, {  useState } from 'react'
 import Createuser from './Createuser';
 import UserContext from '../context/userContext';
 import Sample from './Sample';
+import { useNavigate ,useHistory} from 'react-router-dom';
+import Dashboard from './Dashboard';
 
 
-function Login() {
+function Login(props) {
+  const navigate = useNavigate();
     const[user,Setuser]=useState({
         email:"",
         password:""
     } )
     const [loginSuccess, setLoginSuccess] = useState(false);
+    const [visibility, setvisibility] = useState();
     const styles = {
         color: "red",
         background: "#0f0",
@@ -20,7 +24,7 @@ function Login() {
     };
   
     const handleLogin = async () => {
-       // debugger
+       debugger
         try {
            // const {data} = user;
             const response =   await axios.post("http://localhost:8080/api/auth/signin", user);
@@ -28,36 +32,37 @@ function Login() {
             if (response.status===200) {
                 const jwt=response.data
               //console.log(response.data)
-                setLoginSuccess(true); // Update state if login is successful
+                // Update state if login is successful
                 localStorage.setItem("token",jwt)
+                
+                setLoginSuccess(true);
+                navigate('/dashboard');
+                //setvisibility(false);
 
             } else {
                 setLoginSuccess(false);
             }
         } catch (ex) {
-            if(ex.response && ex.response.code>=400){
+            if(ex.response){
                 const errors={...user.ex};
-                errors.email=ex.response.data;
+                errors.email=ex.response.errors;
                 Setuser({errors})
             }
         }
     };
-
+    function toggleShow() {
+      setvisibility(!visibility);
+    }
    // handleLogin();
     
-   
    
   return (
     <UserContext.Provider value={user}>
 
-<div>
-       <div>
-       <p>{loginSuccess ? (`${user.email}  Login Successful` ): ''}</p> 
-    
-      
-    
-       </div>
-<section className="h-100 gradient-form" style={{styles}.backgroundColor}>
+<div  >
+
+       {
+<section className="h-100 gradient-form" style={{styles}.backgroundColor} >
   <div className="container py-5 h-100">
     <div className="row d-flex justify-content-center align-items-center h-100">
       <div className="col-xl-10">
@@ -102,7 +107,7 @@ function Login() {
                   <div className="d-flex align-items-center justify-content-center pb-4">
                     <p className="mb-0 me-2">Don't have an account?</p>
                     <button type="button" className="btn btn-outline-danger" onClick={()=>{
-                        alert(<Createuser></Createuser>) 
+                        (navigate('/signup')) 
                     }} >Create new</button>
                   </div>
 
@@ -125,8 +130,7 @@ A data enthusiasts with more than 13 years of IT experience in turning data to i
       </div>
     </div>
   </div>
-</section>
-{loginSuccess && <Sample></Sample>}
+</section>}
     </div>
    
     </UserContext.Provider>
